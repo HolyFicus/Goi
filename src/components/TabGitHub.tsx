@@ -36,7 +36,7 @@ export const TabGitHub: React.FC<TabGitHubProps> = ({
   categories,
   profile
 }) => {
-  const [activeSubTab, setActiveSubTab] = useState<'repo' | 'user' | 'sync'>('repo');
+  const [activeSubTab, setActiveSubTab] = useState<'repo' | 'pages' | 'user' | 'sync'>('repo');
 
   // Repo search state
   const [repoInput, setRepoInput] = useState('google-deepmind/alphafold');
@@ -239,6 +239,19 @@ export const TabGitHub: React.FC<TabGitHubProps> = ({
             }`}
           >
             Репозитории
+          </button>
+          <button
+            onClick={() => {
+              pipAudio.playClick();
+              setActiveSubTab('pages');
+            }}
+            className={`px-3 py-1.5 rounded cursor-pointer uppercase font-bold transition-colors ${
+              activeSubTab === 'pages'
+                ? 'bg-[var(--crt-phosphor)] text-black'
+                : 'border border-[var(--crt-phosphor-dim)] text-[var(--crt-phosphor)] hover:border-[var(--crt-phosphor)]'
+            }`}
+          >
+            GitHub Pages
           </button>
           <button
             onClick={() => {
@@ -500,6 +513,105 @@ export const TabGitHub: React.FC<TabGitHubProps> = ({
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Subtab 2: GitHub Pages Deployment Center */}
+      {activeSubTab === 'pages' && (
+        <div className="space-y-4 font-mono text-xs">
+          {/* Status banner */}
+          <div className="border-2 border-[var(--crt-phosphor)] bg-black/60 p-4 rounded-lg box-glow-subtle space-y-2">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--crt-phosphor-dim)] pb-2">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-[var(--crt-phosphor)] animate-ping" />
+                <span className="font-bold text-sm text-[var(--crt-phosphor-bright)] uppercase tracking-wider">
+                  РАЗМЕЩЕНИЕ НА GITHUB PAGES: ГОТОВО К ПУШУ
+                </span>
+              </div>
+              <span className="px-2 py-0.5 bg-[var(--crt-phosphor)]/20 text-[var(--crt-phosphor-bright)] border border-[var(--crt-phosphor)] rounded text-[10px] font-bold">
+                100% СОВМЕСТИМО
+              </span>
+            </div>
+            <p className="opacity-90 leading-relaxed text-[11px]">
+              Проект полностью оптимизирован для бесплатного хостинга на <strong>GitHub Pages</strong>. Все относительные пути (базовый URL, манифест PWA, service worker и перенаправление 404 SPA) уже сконфигурированы.
+            </p>
+          </div>
+
+          {/* Verification checklist */}
+          <div className="border border-[var(--crt-phosphor-dim)] bg-black/40 p-4 rounded-lg space-y-3">
+            <div className="font-bold text-xs uppercase tracking-wider text-[var(--crt-phosphor-bright)] flex items-center gap-1.5">
+              <CheckCircle size={15} /> ЧЕК-ЛИСТ ГОТОВНОСТИ ДЛЯ GITHUB PAGES:
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
+              <div className="bg-black/70 border border-[var(--crt-phosphor-dim)]/50 p-2 rounded flex items-start gap-2">
+                <CheckCircle size={14} className="text-[var(--crt-phosphor-bright)] shrink-0 mt-0.5" />
+                <div>
+                  <strong className="text-[var(--crt-phosphor-bright)] block">vite.config.ts (base: './')</strong>
+                  <span className="opacity-75">Все стили, скрипты и ассеты грузятся относительно подпапки репозитория.</span>
+                </div>
+              </div>
+
+              <div className="bg-black/70 border border-[var(--crt-phosphor-dim)]/50 p-2 rounded flex items-start gap-2">
+                <CheckCircle size={14} className="text-[var(--crt-phosphor-bright)] shrink-0 mt-0.5" />
+                <div>
+                  <strong className="text-[var(--crt-phosphor-bright)] block">Авто-деплой GitHub Actions</strong>
+                  <span className="opacity-75">Файл <code>.github/workflows/deploy.yml</code> уже включен в проект.</span>
+                </div>
+              </div>
+
+              <div className="bg-black/70 border border-[var(--crt-phosphor-dim)]/50 p-2 rounded flex items-start gap-2">
+                <CheckCircle size={14} className="text-[var(--crt-phosphor-bright)] shrink-0 mt-0.5" />
+                <div>
+                  <strong className="text-[var(--crt-phosphor-bright)] block">PWA & Service Worker</strong>
+                  <span className="opacity-75">Относительные пути <code>./manifest.json</code> и динамический scope в <code>sw.js</code>.</span>
+                </div>
+              </div>
+
+              <div className="bg-black/70 border border-[var(--crt-phosphor-dim)]/50 p-2 rounded flex items-start gap-2">
+                <CheckCircle size={14} className="text-[var(--crt-phosphor-bright)] shrink-0 mt-0.5" />
+                <div>
+                  <strong className="text-[var(--crt-phosphor-bright)] block">public/404.html SPA Handler</strong>
+                  <span className="opacity-75">Защита от 404 ошибок при обновлении страницы на GitHub Pages.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 3-Step Instruction */}
+          <div className="border border-[var(--crt-phosphor-dim)] bg-black/40 p-4 rounded-lg space-y-3">
+            <div className="font-bold text-xs uppercase tracking-wider text-[var(--crt-phosphor-bright)]">
+              КАК ОПУБЛИКОВАТЬ САЙТ ЗА 3 ШАГА:
+            </div>
+
+            <div className="space-y-2.5 leading-relaxed text-[11px]">
+              <div className="bg-black/80 border border-zinc-800 p-2.5 rounded">
+                <div className="font-bold text-[var(--crt-phosphor-bright)] mb-1">ШАГ 1: Создайте новый репозиторий на GitHub</div>
+                <div className="opacity-80">Перейдите на <a href="https://github.com/new" target="_blank" rel="noopener noreferrer" className="underline text-[var(--crt-phosphor)]">github.com/new</a> и создайте репозиторий (например, <code>pipboy-student</code>).</div>
+              </div>
+
+              <div className="bg-black/80 border border-zinc-800 p-2.5 rounded">
+                <div className="font-bold text-[var(--crt-phosphor-bright)] mb-1">ШАГ 2: Отправьте код в репозиторий (Git Push)</div>
+                <div className="bg-black border border-[var(--crt-phosphor-dim)]/50 p-2 rounded text-[10px] text-[var(--crt-phosphor-bright)] font-mono space-y-0.5 select-all">
+                  <div>git init</div>
+                  <div>git add .</div>
+                  <div>git commit -m "feat: initial Pip-Boy 3000 Student Edition"</div>
+                  <div>git branch -M main</div>
+                  <div>git remote add origin https://github.com/ВАШ_ЛОГИН/ВАШ_РЕПОЗИТОРИЙ.git</div>
+                  <div>git push -u origin main</div>
+                </div>
+              </div>
+
+              <div className="bg-black/80 border border-zinc-800 p-2.5 rounded">
+                <div className="font-bold text-[var(--crt-phosphor-bright)] mb-1">ШАГ 3: Включите GitHub Pages в настройках репозитория</div>
+                <div className="opacity-80">
+                  В репозитории перейдите в <strong>Settings</strong> → <strong>Pages</strong> → в блоке <em>Build and deployment</em> выберите <strong>Source: GitHub Actions</strong>.
+                </div>
+                <div className="text-[10px] text-amber-300 mt-1 font-bold">
+                  ⚡ Всё! GitHub Actions автоматически соберет проект и сайт откроется по адресу: https://ВАШ_ЛОГИН.github.io/ВАШ_РЕПОЗИТОРИЙ/
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 

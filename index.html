@@ -10,14 +10,14 @@
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
 
-    <!-- PWA Settings -->
-    <link rel="manifest" href="/manifest.json" />
+    <!-- PWA Settings (Relative paths for GitHub Pages subfolder compatibility) -->
+    <link rel="manifest" href="./manifest.json" />
     <meta name="theme-color" content="#0a1f0d" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Pip-Boy OS" />
-    <link rel="apple-touch-icon" href="/icon-192.svg" />
-    <link rel="icon" type="image/svg+xml" href="/icon-192.svg" />
+    <link rel="apple-touch-icon" href="./icon-192.svg" />
+    <link rel="icon" type="image/svg+xml" href="./icon-192.svg" />
 
     <!-- Google Fonts for Pip-Boy CRT terminal typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,12 +26,12 @@
   </head>
   <body class="bg-[#050c06] text-[#22c55e] select-none">
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="./src/main.tsx"></script>
     <script>
-      // Service worker registration
+      // Service worker registration with relative scope
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW reg fail:', err));
+          navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW reg fail:', err));
         });
       }
     </script>

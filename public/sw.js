@@ -1,18 +1,21 @@
 // Pip-Boy 3000: Student OS Service Worker
-const CACHE_NAME = 'pipboy-student-v1';
-const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icon-192.svg',
-  '/icon-512.svg'
-];
+// Fully compatible with root domain, local preview, and GitHub Pages subpath
+const CACHE_NAME = 'pipboy-student-v2';
 
 self.addEventListener('install', (event) => {
+  const scope = self.registration.scope;
+  const STATIC_ASSETS = [
+    scope,
+    scope + 'index.html',
+    scope + 'manifest.json',
+    scope + 'icon-192.svg',
+    scope + 'icon-512.svg'
+  ];
+
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(STATIC_ASSETS).catch((err) => {
-        console.warn('PWA Cache prefill error:', err);
+        console.warn('PWA Cache prefill error (harmless during dev/deploy):', err);
       });
     })
   );
@@ -31,23 +34,30 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Only handle GET requests and skip chrome-extension / API requests
-  if (event.request.method !== 'GET' || !event.request.url.startsWith(self.location.origin)) {
+  if (event.request.method !== 'GET') return;
+
+  const url = event.request.url;
+  const scope = self.registration.scope;
+
+  // Only handle requests belonging to this app's origin and scope
+  if (!url.startsWith(self.location.origin) || !url.startsWith(scope)) {
     return;
   }
 
   event.respondWith(
     caches.match(event.request).then((cached) => {
       if (cached) {
-        // Return cached and refresh in background
-        fetch(event.request).then((freshResponse) => {
-          if (freshResponse && freshResponse.status === 200) {
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, freshResponse));
-          }
-        }).catch(() => {});
+        // Cache hit: return cached and update in background
+        fetch(event.request)
+          .then((freshResponse) => {
+            if (freshResponse && freshResponse.status === 200) {
+              caches.open(CACHE_NAME).then((cache) => cache.put(event.request, freshResponse));
+            }
+          })
+          .catch(() => {});
         return cached;
       }
-      return fetch(event.request).catch(() => caches.match('/index.html'));
+      return fetch(event.request).catch(() => caches.match(scope + 'index.html'));
     })
   );
 });
@@ -63,16 +73,12 @@ self.addEventListener('push', (event) => {
     }
   }
 
+  const scope = self.registration.scope;
   const options = {
     body: data.body,
-    icon: '/icon-192.svg',
-    badge: '/icon-192.svg',
-    vibrate: [200, 100, 200, 100, 200],
-    data: data.url || '/',
-    actions: [
-      { action: 'open', title: 'Открыть в Pip-Boy' },
-      { action: 'dismiss', title: 'Игнорировать' }
-    ]
+    icon: scope + 'icon-192.svg',
+    badge: scope + 'icon-192.svg',
+    data: data.url || scope
   };
 
   event.waitUntil(
@@ -82,7 +88,7 @@ self.addEventListener('push', (event) => {
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  if (event.action === 'dismiss') return;
+  const targetUrl = event.notification.data || self.registration.scope;
 
   event.waitUntil(
     clients.matchAll({ type: 'window' }).then((clientList) => {
@@ -92,7 +98,7 @@ self.addEventListener('notificationclick', (event) => {
         }
       }
       if (clients.openWindow) {
-        return clients.openWindow(event.notification.data || '/');
+        return clients.openWindow(targetUrl);
       }
     })
   );
