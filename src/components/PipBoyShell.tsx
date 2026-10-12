@@ -1,28 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ThemeColor, PipBoySettings, StudentProfile, PipBoyNotification } from '../types/pipboy';
 import { pipAudio } from '../utils/audio';
+import { getMoscowTimeState, MoscowTimeState } from '../utils/academicCalendar';
+import { AcademicScheduleModal } from './AcademicScheduleModal';
 import {
   Volume2,
   VolumeX,
   Palette,
   Bell,
-  Maximize2,
-  Minimize2,
   Clock,
-  Sparkles,
   HelpCircle,
   X,
   BookOpen,
   User,
-  Activity,
-  Layers,
   FlaskConical,
-  FolderGit2,
-  Download,
-  List
+  List,
+  Calendar,
+  ArrowUpRight,
+  ArrowDownRight
 } from 'lucide-react';
 
-export type ActiveTab = 'MONITOR' | 'SCIENCE' | 'GITHUB' | 'WIDGET' | 'INSTALL' | 'PROFILE' | 'GUIDE';
+export type ActiveTab = 'MONITOR' | 'SCIENCE' | 'PROFILE' | 'GUIDE';
 
 interface PipBoyShellProps {
   activeTab: ActiveTab;
@@ -36,8 +34,6 @@ interface PipBoyShellProps {
   onClearNotifications: () => void;
   onResetAllData: () => void;
   children: React.ReactNode;
-  compactHudMode: boolean;
-  onToggleCompactHud: () => void;
 }
 
 export const PipBoyShell: React.FC<PipBoyShellProps> = ({
@@ -51,16 +47,25 @@ export const PipBoyShell: React.FC<PipBoyShellProps> = ({
   notifications,
   onClearNotifications,
   onResetAllData,
-  children,
-  compactHudMode,
-  onToggleCompactHud
+  children
 }) => {
   const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
+  const [moscowTime, setMoscowTime] = useState<MoscowTimeState>(() => getMoscowTimeState());
+
   const unreadCount = notifications.filter((n) => !n.read).length;
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setMoscowTime(getMoscowTimeState());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   const cycleTheme = () => {
     pipAudio.playClick();
-    const themes: ThemeColor[] = ['green', 'amber', 'cyan'];
+    const themes: ThemeColor[] = ['lilac', 'green', 'amber', 'cyan'];
     const nextIdx = (themes.indexOf(settings.colorTheme) + 1) % themes.length;
     onUpdateSettings({ colorTheme: themes[nextIdx] });
   };
@@ -72,67 +77,11 @@ export const PipBoyShell: React.FC<PipBoyShellProps> = ({
   };
 
   const tabs: { id: ActiveTab; label: string; icon: React.ReactNode }[] = [
-    { id: 'MONITOR', label: 'МОНИТОРИНГ', icon: <List size={13} /> },
-    { id: 'SCIENCE', label: 'НАУКА (PUBMED)', icon: <FlaskConical size={13} /> },
-    { id: 'GITHUB', label: 'GITHUB (КОД)', icon: <FolderGit2 size={13} /> },
-    { id: 'WIDGET', label: 'ВИДЖЕТ', icon: <Layers size={13} /> },
-    { id: 'INSTALL', label: 'УСТАНОВКА PWA', icon: <Download size={13} /> },
-    { id: 'PROFILE', label: 'ПРОФИЛЬ СТУДЕНТА', icon: <User size={13} /> },
-    { id: 'GUIDE', label: 'ИНСТРУКЦИЯ', icon: <BookOpen size={13} /> }
+    { id: 'MONITOR', label: 'МОНИТОРИНГ', icon: <List size={14} /> },
+    { id: 'SCIENCE', label: 'НАУЧНЫЕ БАЗЫ', icon: <FlaskConical size={14} /> },
+    { id: 'PROFILE', label: 'ПРОФИЛЬ СТУДЕНТА', icon: <User size={14} /> },
+    { id: 'GUIDE', label: 'ИНСТРУКЦИЯ', icon: <BookOpen size={14} /> }
   ];
-
-  if (compactHudMode) {
-    return (
-      <div
-        data-theme={settings.colorTheme}
-        className="fixed bottom-4 right-4 z-50 w-80 max-w-[calc(100vw-2rem)] border-2 border-[var(--crt-phosphor)] bg-[#050e06]/95 rounded-xl p-3 box-glow shadow-2xl font-mono text-xs text-[var(--crt-phosphor)]"
-      >
-        <div className="flex items-center justify-between border-b border-[var(--crt-phosphor-dim)] pb-1.5 mb-2">
-          <div className="flex items-center gap-1.5 font-bold text-[var(--crt-phosphor-bright)]">
-            <span className="w-2 h-2 rounded-full bg-[var(--crt-phosphor)] animate-ping" />
-            PIP-BOY HUD WIDGET
-          </div>
-          <button
-            onClick={onToggleCompactHud}
-            className="p-1 hover:text-[var(--crt-phosphor-bright)] cursor-pointer"
-            title="Развернуть полный терминал"
-          >
-            <Maximize2 size={13} />
-          </button>
-        </div>
-
-        <div className="space-y-2">
-          <div className="flex justify-between items-center text-[11px] opacity-80">
-            <span>РЕСУРСОВ: {linksCount}</span>
-            <span>ОБНОВЛЕНИЙ: {changedCount}</span>
-          </div>
-
-          <div className="bg-black/80 border border-[var(--crt-phosphor-dim)]/50 p-2 rounded">
-            {changedCount > 0 ? (
-              <div className="text-amber-300 font-bold">
-                ⚡ Обнаружено {changedCount} изменений на сайтах!
-              </div>
-            ) : (
-              <div className="opacity-80">
-                Все ресурсы проверены. Опрос активен.
-              </div>
-            )}
-          </div>
-
-          <button
-            onClick={() => {
-              pipAudio.playClick();
-              onToggleCompactHud();
-              onSelectTab('MONITOR');
-            }}
-            className="w-full py-1 text-center bg-[var(--crt-phosphor)] text-black font-bold rounded cursor-pointer"
-          >
-            ОТКРЫТЬ МОНИТОР
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div
@@ -143,42 +92,127 @@ export const PipBoyShell: React.FC<PipBoyShellProps> = ({
     >
       {/* Outer Industrial Hardware Casing */}
       <div className="max-w-6xl w-full mx-auto my-auto border-4 sm:border-8 border-[#1f2820] bg-[#071309] rounded-2xl sm:rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.9)] relative overflow-hidden flex flex-col">
-        {/* Hardware Bezel Top Screws & Knobs */}
-        <div className="bg-[#121c13] border-b-4 border-[#1c291e] px-4 py-2 sm:py-3 flex flex-wrap items-center justify-between gap-3 select-none">
-          {/* Logo & Status Indicator */}
-          <div className="flex items-center gap-3">
-            <div className="w-3.5 h-3.5 rounded-full bg-[#354337] border border-[#162017] flex items-center justify-center shadow-inner">
+        {/* Hardware Bezel Top Screws & Knobs with Real-Time MSK Clock & Academic Week Parity */}
+        <div className="bg-[#121c13] border-b-4 border-[#1c291e] px-3 sm:px-4 py-2 sm:py-2.5 flex flex-wrap items-center justify-between gap-3 select-none">
+          {/* Logo & Station Status */}
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="w-3.5 h-3.5 rounded-full bg-[#354337] border border-[#162017] flex items-center justify-center shadow-inner shrink-0">
               <div className="w-2 h-0.5 bg-[#162017]" />
             </div>
 
             <div className="flex flex-col">
-              <span className="font-extrabold text-xs sm:text-sm tracking-[0.2em] text-[#86a88b] uppercase">
+              <span className="font-extrabold text-xs sm:text-sm tracking-[0.2em] text-[#86a88b] uppercase leading-tight">
                 PIP-BOY 3000
               </span>
-              <span className="text-[10px] tracking-widest text-[#4d6952] font-bold uppercase">
-                STUDENT EDITION · ТЕРМИНАЛ МОНИТОРИНГА
+              <span className="text-[9px] sm:text-[10px] tracking-widest text-[#4d6952] font-bold uppercase">
+                ГУМАНИТАРНАЯ РАБОЧАЯ СТАНЦИЯ
               </span>
             </div>
 
             {/* Live Status Pulse */}
-            <div className="hidden sm:flex items-center gap-1.5 bg-[#09110a] border border-[#273a2a] px-2.5 py-0.5 rounded-full shadow-inner">
-              <div className="w-2 h-2 rounded-full bg-[var(--crt-phosphor)] shadow-[0_0_8px_var(--crt-phosphor)] animate-pulse" />
-              <span className="text-[9px] text-[var(--crt-phosphor-bright)] font-mono font-bold tracking-wider">
+            <div className="hidden 2xl:flex items-center gap-1.5 bg-[#09110a] border border-[#273a2a] px-2 py-0.5 rounded-full shadow-inner">
+              <div className="w-1.5 h-1.5 rounded-full bg-[var(--crt-phosphor)] shadow-[0_0_8px_var(--crt-phosphor)] animate-pulse" />
+              <span className="text-[8.5px] text-[var(--crt-phosphor-bright)] font-mono font-bold tracking-wider">
                 СИСТЕМА АКТИВНА
               </span>
             </div>
           </div>
 
-          {/* Controls: Theme, Sound, Alerts, Clear Data, HUD */}
-          <div className="flex items-center gap-2 sm:gap-3 text-xs">
-            {/* Theme Selector */}
+          {/* Academic & Time HUD: Device-Synchronized Moscow Time, Full Date & Even/Odd Academic Week */}
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 font-mono">
+            {/* Live Clock & Full Date (MSK) */}
+            <div
+              className="flex items-center gap-2 sm:gap-3 bg-[#08120a] border border-[#233827] px-2.5 sm:px-3 py-1 rounded shadow-inner"
+              title="Синхронизированное с устройством московское время (UTC+3) и текущая календарная дата"
+            >
+              <Clock size={14} className="text-emerald-400 animate-pulse shrink-0" />
+
+              {/* Real-time Time */}
+              <div className="flex items-baseline gap-1">
+                <span className="font-extrabold text-xs sm:text-sm tracking-widest text-[var(--crt-phosphor-bright)]">
+                  {moscowTime.timeStr}
+                </span>
+                <span className="text-[9px] text-[#719677] font-bold">МСК</span>
+              </div>
+
+              {/* Separator */}
+              <div className="h-4 w-px bg-[#233827]" />
+
+              {/* Full Date: Year, Month, Day, Weekday */}
+              <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px]">
+                <span className="text-[#a4c9a8] font-bold">
+                  {moscowTime.dayNumber} {moscowTime.monthName} {moscowTime.yearNumber} г.
+                </span>
+                <span className="hidden md:inline text-[9px] text-[#5e7e63] font-semibold uppercase">
+                  ({moscowTime.weekdayFull})
+                </span>
+              </div>
+            </div>
+
+            {/* Academic Week System: Upper (Odd) vs Lower (Even) */}
+            <button
+              onClick={() => {
+                pipAudio.playClick();
+                setIsScheduleModalOpen(true);
+              }}
+              className={`flex items-center gap-2 px-2.5 sm:px-3 py-1 rounded border cursor-pointer transition-all hover:scale-[1.01] ${
+                moscowTime.computedParity.isOdd
+                  ? 'bg-emerald-950/40 border-emerald-500/50 hover:bg-emerald-900/40 text-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.15)]'
+                  : 'bg-amber-950/40 border-amber-500/50 hover:bg-amber-900/40 text-amber-300 shadow-[0_0_12px_rgba(245,158,11,0.15)]'
+              }`}
+              title="Нажмите, чтобы просмотреть график 18 учебных недель семестра"
+            >
+              {moscowTime.computedParity.isOdd ? (
+                <ArrowUpRight size={14} className="text-emerald-400 shrink-0" />
+              ) : (
+                <ArrowDownRight size={14} className="text-amber-400 shrink-0" />
+              )}
+
+              <div className="flex flex-col text-left leading-tight">
+                <div className="flex items-center gap-1.5">
+                  <span className="font-extrabold text-[10px] sm:text-[11px] tracking-wider uppercase">
+                    {moscowTime.computedParity.typeName} неделя
+                  </span>
+                  <span className="text-[9px] opacity-75 font-semibold">
+                    ({moscowTime.computedParity.parityName})
+                  </span>
+                </div>
+                {moscowTime.currentWeek ? (
+                  <span className="text-[9px] opacity-80">
+                    {moscowTime.currentWeek.num}-я неделя • {moscowTime.currentWeek.label}
+                  </span>
+                ) : (
+                  <span className="text-[9px] opacity-80">
+                    {moscowTime.computedParity.sublabel}
+                  </span>
+                )}
+              </div>
+
+              <div className="flex items-center gap-1 ml-1 pl-1.5 border-l border-current/30 text-[9px] font-semibold opacity-75 hidden sm:flex">
+                <Calendar size={11} />
+                <span>ГРАФИК</span>
+              </div>
+            </button>
+          </div>
+
+          {/* Controls: Theme, Sound, Alerts */}
+          <div className="flex items-center gap-2 sm:gap-2.5 text-xs">
+            {/* Theme Selector (Green / Amber / Cyan / Lilac) */}
             <button
               onClick={cycleTheme}
-              className="flex items-center gap-1 px-2.5 py-1 bg-[#1a291c] hover:bg-[#253a28] border border-[#304733] rounded text-[11px] text-[#9fc7a4] font-bold cursor-pointer transition-colors"
-              title="Переключить цвет люминофора (Green / Amber / Cyan)"
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 bg-[#1a291c] hover:bg-[#253a28] border border-[#304733] rounded text-[11px] text-[#9fc7a4] font-bold cursor-pointer transition-colors"
+              title="Переключить цвет люминофора (Сиреневый / Зеленый / Янтарный / Голубой)"
             >
               <Palette size={13} />
-              <span className="uppercase">{settings.colorTheme}</span>
+              <span className="uppercase text-[10px] sm:text-[11px]">
+                {settings.colorTheme === 'lilac'
+                  ? 'СИРЕНЕВЫЙ'
+                  : settings.colorTheme === 'green'
+                  ? 'ЗЕЛЕНЫЙ'
+                  : settings.colorTheme === 'amber'
+                  ? 'ЯНТАРНЫЙ'
+                  : 'ГОЛУБОЙ'}
+              </span>
             </button>
 
             {/* Sound Toggle */}
@@ -211,17 +245,8 @@ export const PipBoyShell: React.FC<PipBoyShellProps> = ({
               )}
             </button>
 
-            {/* Mini HUD toggle */}
-            <button
-              onClick={onToggleCompactHud}
-              className="p-1.5 border border-[#304733] hover:border-[var(--crt-phosphor)] rounded cursor-pointer text-[#9fc7a4]"
-              title="Свернуть в плавающий виджет"
-            >
-              <Minimize2 size={14} />
-            </button>
-
-            {/* Screw */}
-            <div className="w-3.5 h-3.5 rounded-full bg-[#354337] border border-[#162017] flex items-center justify-center shadow-inner ml-1">
+            {/* Hardware Screw */}
+            <div className="w-3.5 h-3.5 rounded-full bg-[#354337] border border-[#162017] flex items-center justify-center shadow-inner ml-1 shrink-0">
               <div className="w-2 h-0.5 bg-[#162017]" />
             </div>
           </div>
@@ -232,7 +257,7 @@ export const PipBoyShell: React.FC<PipBoyShellProps> = ({
           {settings.scanlines && <div className="absolute inset-0 crt-overlay z-20 pointer-events-none" />}
           <div className="absolute inset-0 crt-vignette z-20 pointer-events-none" />
 
-          {/* Top Tabs */}
+          {/* Top Tabs: Clean & Focused */}
           <div className="relative z-30 border-b-2 border-[var(--crt-phosphor-dim)] pb-2 mb-4">
             <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar font-mono text-xs sm:text-sm">
               {tabs.map((tab) => {
@@ -278,16 +303,15 @@ export const PipBoyShell: React.FC<PipBoyShellProps> = ({
 
             <div className="flex items-center gap-2 text-[11px] opacity-80">
               <span>СТУДЕНТ: {profile.fullName || 'НЕ ЗАПОЛНЕНО'}</span>
-              {profile.university && <span>({profile.university})</span>}
+              {profile.faculty && <span>({profile.faculty})</span>}
             </div>
 
             <div className="flex items-center gap-3 text-[11px] opacity-75">
               <span>АВТО-СИНХРОНИЗАЦИЯ: {settings.globalInterval}с</span>
               <button
                 onClick={() => {
-                  if (confirm('Вы уверены, что хотите очистить все сохраненные ссылки и данные?')) {
-                    onResetAllData();
-                  }
+                  pipAudio.playClick();
+                  setShowResetConfirm(true);
                 }}
                 className="underline hover:text-red-400 cursor-pointer text-[10px]"
                 title="Полностью очистить сохраненные данные"
@@ -305,7 +329,7 @@ export const PipBoyShell: React.FC<PipBoyShellProps> = ({
               <div key={i} className="w-1.5 h-1.5 rounded-full bg-[#202e22]" />
             ))}
           </div>
-          <span>PIP-BOY STUDENT WORKSTATION · ВЕРСИЯ 2.0 (PROFESSIONAL)</span>
+          <span>PIP-BOY STUDENT WORKSTATION · ГУМАНИТАРНАЯ РЕДАКЦИЯ</span>
           <div className="flex gap-1.5">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="w-1.5 h-1.5 rounded-full bg-[#202e22]" />
@@ -341,7 +365,7 @@ export const PipBoyShell: React.FC<PipBoyShellProps> = ({
             <div className="max-h-72 overflow-y-auto space-y-2 pr-1 text-xs">
               {notifications.length === 0 ? (
                 <div className="text-center py-6 opacity-60">
-                  Нет новых оповещений. Все отслеживаемые сайты спокойны.
+                  Нет новых оповещений. Все отслеживаемые ресурсы спокойны.
                 </div>
               ) : (
                 notifications.map((n) => (
@@ -361,6 +385,49 @@ export const PipBoyShell: React.FC<PipBoyShellProps> = ({
           </div>
         </div>
       )}
+
+      {/* Reset Confirmation Modal */}
+      {showResetConfirm && (
+        <div className="fixed inset-0 bg-black/85 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+          <div className="border-2 border-red-500 bg-[#0f0406] p-5 rounded-xl max-w-sm w-full text-red-300 space-y-4 font-mono shadow-[0_0_30px_rgba(239,68,68,0.4)]">
+            <div className="font-bold text-sm uppercase tracking-wider text-red-400">
+              ⚠️ ПОДТВЕРЖДЕНИЕ ОЧИСТКИ ДАННЫХ
+            </div>
+            <p className="text-xs text-red-200/90 leading-relaxed">
+              Вы действительно хотите удалить все сохраненные ссылки, созданные категории и очистить профиль? Это действие необратимо.
+            </p>
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                onClick={() => {
+                  pipAudio.playClick();
+                  setShowResetConfirm(false);
+                }}
+                className="px-3 py-1.5 border border-zinc-600 hover:border-zinc-400 text-zinc-300 rounded text-xs cursor-pointer"
+              >
+                ОТМЕНА
+              </button>
+              <button
+                onClick={() => {
+                  setShowResetConfirm(false);
+                  onResetAllData();
+                }}
+                className="px-4 py-1.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded text-xs cursor-pointer shadow-md"
+              >
+                ДА, ОЧИСТИТЬ ВСЁ
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Semester Academic Schedule Modal */}
+      <AcademicScheduleModal
+        isOpen={isScheduleModalOpen}
+        onClose={() => setIsScheduleModalOpen(false)}
+        currentWeek={moscowTime.currentWeek}
+        timeStr={moscowTime.timeStr}
+        dateStr={`${moscowTime.dayNumber} ${moscowTime.monthName} ${moscowTime.yearNumber} г.`}
+      />
     </div>
   );
 };

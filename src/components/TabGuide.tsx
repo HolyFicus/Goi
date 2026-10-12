@@ -4,56 +4,49 @@ import {
   Plus,
   Search,
   Bell,
-  Smartphone,
   Layers,
   FlaskConical,
-  ExternalLink,
-  CheckCircle2,
-  Clock,
-  Sparkles,
   HelpCircle,
   ShieldCheck,
-  FolderPlus
+  Languages,
+  Sparkles,
+  Palette
 } from 'lucide-react';
 
 interface TabGuideProps {
   onGoToMonitor: () => void;
   onGoToScience: () => void;
-  onGoToInstall: () => void;
-  onGoToGitHub?: () => void;
 }
 
 export const TabGuide: React.FC<TabGuideProps> = ({
   onGoToMonitor,
-  onGoToScience,
-  onGoToInstall,
-  onGoToGitHub
+  onGoToScience
 }) => {
   return (
     <div className="space-y-6">
       {/* Intro Banner */}
-      <div className="border border-[var(--crt-phosphor-dim)] bg-black/50 p-4 rounded-lg flex flex-wrap items-center justify-between gap-3">
+      <div className="border border-[var(--crt-phosphor-dim)] bg-[#071309] p-4 sm:p-5 rounded-xl flex flex-wrap items-center justify-between gap-4">
         <div className="space-y-1">
-          <div className="text-sm font-bold uppercase tracking-wider text-[var(--crt-phosphor-bright)] flex items-center gap-2">
+          <div className="text-sm sm:text-base font-bold uppercase tracking-wider text-[var(--crt-phosphor-bright)] flex items-center gap-2">
             <BookOpen size={18} /> КРАТКОЕ РУКОВОДСТВО ПО ЭКСПЛУАТАЦИИ PIP-BOY STUDENT
           </div>
-          <div className="text-xs opacity-80 max-w-2xl leading-relaxed">
-            Приложение предназначено для непрерывного отслеживания обновлений на учебных порталах, публикации оценок в деканате, изменений в расписании и выхода новых научных статей.
+          <div className="text-xs sm:text-sm text-[var(--crt-phosphor)]/80 max-w-2xl leading-relaxed">
+            Терминал студента гуманитарного факультета для организации учебных порталов, мониторинга научных баз данных, академического перевода и подготовки к курсовым и семинарам.
           </div>
         </div>
 
         <button
           onClick={onGoToMonitor}
-          className="px-4 py-2 bg-[var(--crt-phosphor)] text-black font-bold text-xs rounded cursor-pointer hover:bg-[var(--crt-phosphor-bright)] transition-colors uppercase tracking-wider flex items-center gap-1.5"
+          className="px-4 py-2 bg-[var(--crt-phosphor)] text-black font-bold text-xs rounded-lg cursor-pointer hover:bg-[var(--crt-phosphor-bright)] transition-colors uppercase tracking-wider flex items-center gap-1.5 shadow-md"
         >
-          <Plus size={14} /> НАЧАТЬ РАБОТУ СО ССЫЛКАМИ
+          <Plus size={14} /> К МОНИТОРИНГУ ССЫЛОК
         </button>
       </div>
 
       {/* Step by step cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Step 1 */}
-        <div className="border border-[var(--crt-phosphor-dim)] bg-black/40 p-4 rounded-lg space-y-2.5">
+        <div className="border border-[var(--crt-phosphor-dim)] bg-[#071309] p-4 rounded-xl space-y-2.5">
           <div className="flex items-center gap-2">
             <span className="w-6 h-6 rounded-full bg-[var(--crt-phosphor)] text-black font-extrabold text-xs flex items-center justify-center">
               1
@@ -62,19 +55,20 @@ export const TabGuide: React.FC<TabGuideProps> = ({
               ДОБАВЛЕНИЕ ССЫЛОК И НАСТРОЙКА ОПРОСА
             </div>
           </div>
-          <p className="text-xs opacity-85 leading-relaxed">
-            Перейдите во вкладку <strong>«МОНИТОРИНГ»</strong> и нажмите <strong>«+ НОВАЯ ССЫЛКА»</strong>.
+          <p className="text-xs text-[var(--crt-phosphor)]/85 leading-relaxed">
+            Во вкладке <strong>«МОНИТОРИНГ»</strong> нажмите кнопку <strong>«+ НОВАЯ ССЫЛКА»</strong>:
           </p>
-          <ul className="text-xs opacity-80 list-disc list-inside space-y-1">
-            <li>Укажите название (например: <em>«Личный кабинет»</em> или <em>«Расписание 3 курса»</em>).</li>
-            <li>Вставьте URL-адрес сайта.</li>
-            <li>Выберите интервал фоновой проверки: <strong>каждые 30 секунд</strong>, <strong>1 минуту</strong> или <strong>5 минут</strong>.</li>
-            <li>Включите галочку <strong>«Отправлять Push-уведомление при изменениях»</strong>.</li>
+          <ul className="text-xs text-[var(--crt-phosphor)]/80 list-disc list-inside space-y-1">
+            <li>Укажите название (например: <em>«Личный кабинет студента»</em>, <em>«Темы курсовых»</em>).</li>
+            <li>Вставьте URL-адрес страницы портала, сайта кафедры или научной статьи.</li>
+            <li><strong>Категории прямо при подключении:</strong> выбирайте существующую папку или создавайте новую на лету прямо в окне добавления.</li>
+            <li><strong>Гибкий интервал опроса:</strong> выбирайте пресет (от 15 сек. до 1 ч.) либо задавайте произвольное время в секундах вручную (например: 45 сек.).</li>
+            <li>Включайте Push-уведомления при обнаружении изменений.</li>
           </ul>
         </div>
 
         {/* Step 2 */}
-        <div className="border border-[var(--crt-phosphor-dim)] bg-black/40 p-4 rounded-lg space-y-2.5">
+        <div className="border border-[var(--crt-phosphor-dim)] bg-[#071309] p-4 rounded-xl space-y-2.5">
           <div className="flex items-center gap-2">
             <span className="w-6 h-6 rounded-full bg-[var(--crt-phosphor)] text-black font-extrabold text-xs flex items-center justify-center">
               2
@@ -83,133 +77,150 @@ export const TabGuide: React.FC<TabGuideProps> = ({
               ТЕГИ И НАСТРАИВАЕМЫЕ КАТЕГОРИИ
             </div>
           </div>
-          <p className="text-xs opacity-85 leading-relaxed">
-            Для быстрой навигации организуйте ресурсы по папкам и ключевым словам:
+          <p className="text-xs text-[var(--crt-phosphor)]/85 leading-relaxed">
+            Структурируйте ссылки под ваши учебные задачи:
           </p>
-          <ul className="text-xs opacity-80 list-disc list-inside space-y-1">
+          <ul className="text-xs text-[var(--crt-phosphor)]/80 list-disc list-inside space-y-1">
             <li>
-              Нажмите <strong>«КАТЕГОРИИ»</strong>, чтобы создать свои папки: <em>«ДИПЛОМ»</em>, <em>«ГРАНТЫ»</em>, <em>«ПРАКТИКА»</em>.
+              Кнопка <strong>«КАТЕГОРИИ»</strong> позволяет создавать, переименовывать и удалять разделы (например: <em>«ДИПЛОМ»</em>, <em>«СЕМИНАРЫ»</em>, <em>«ИСТОЧНИКИ»</em>).
             </li>
             <li>
-              Привязывайте теги (например: <code>#сессия</code>, <code>#лабы</code>, <code>#дедлайн</code>).
+              Назначайте теги (<code>#сессия</code>, <code>#первоисточник</code>, <code>#латынь</code>) и фильтруйте в один клик.
             </li>
             <li>
-              Строка поиска находит нужное <strong>мгновенно</strong>: ищите по названию, URL или кликайте по чипам тегов.
+              Быстрый поиск мгновенно ищет по названию, URL или тегу.
             </li>
           </ul>
         </div>
 
         {/* Step 3 */}
-        <div className="border border-[var(--crt-phosphor-dim)] bg-black/40 p-4 rounded-lg space-y-2.5">
+        <div className="border border-[var(--crt-phosphor-dim)] bg-[#071309] p-4 rounded-xl space-y-2.5">
           <div className="flex items-center gap-2">
             <span className="w-6 h-6 rounded-full bg-[var(--crt-phosphor)] text-black font-extrabold text-xs flex items-center justify-center">
               3
             </span>
             <div className="font-bold text-xs uppercase tracking-wider text-[var(--crt-phosphor-bright)]">
-              ОТСЛЕЖИВАНИЕ ИЗМЕНЕНИЙ (DIFF DETECTOR)
+              ОТСЛЕЖИВАНИЕ ОБНОВЛЕНИЙ (DIFF DETECTOR)
             </div>
           </div>
-          <p className="text-xs opacity-85 leading-relaxed">
-            Терминал регулярно опрашивает сайты и вычисляет контрольные суммы содержимого:
+          <p className="text-xs text-[var(--crt-phosphor)]/85 leading-relaxed">
+            Терминал регулярно мониторит добавленные ресурсы на предмет изменений:
           </p>
-          <ul className="text-xs opacity-80 list-disc list-inside space-y-1">
-            <li>При обнаружении изменений карточка подсветится статусом <strong>«DIFF: ОБНОВЛЕНО»</strong>.</li>
-            <li>Раздастся звуковой сигнал и придет системное Push-уведомление.</li>
-            <li>Кнопка <strong>«ИСТОРИЯ»</strong> покажет точное время каждого изменения и хронологию правок.</li>
-            <li>Вы можете протестировать логику кнопкой <strong>«ТЕСТ DIFF»</strong>.</li>
+          <ul className="text-xs text-[var(--crt-phosphor)]/80 list-disc list-inside space-y-1">
+            <li>При появлении правок карточка подсвечивается статусом <strong>«DIFF: ОБНОВЛЕНО»</strong>.</li>
+            <li>Воспроизводится звуковой сигнал и регистрируется уведомление в колокольчике.</li>
+            <li>Кнопка <strong>«ИСТОРИЯ»</strong> сохраняет протокол изменений с точной датой и временем.</li>
           </ul>
         </div>
 
-        {/* Step 4 */}
-        <div className="border border-[var(--crt-phosphor-dim)] bg-black/40 p-4 rounded-lg space-y-2.5">
+        {/* Step 4: Graphical & Written Site Data + AI Consultant */}
+        <div className="border border-amber-500/60 bg-amber-950/20 p-4 rounded-xl space-y-2.5">
           <div className="flex items-center gap-2">
-            <span className="w-6 h-6 rounded-full bg-[var(--crt-phosphor)] text-black font-extrabold text-xs flex items-center justify-center">
+            <span className="w-6 h-6 rounded-full bg-amber-400 text-black font-extrabold text-xs flex items-center justify-center">
               4
             </span>
-            <div className="font-bold text-xs uppercase tracking-wider text-[var(--crt-phosphor-bright)]">
-              УСТАНОВКА НА РАБОЧИЙ СТОЛ (PWA) И ВИДЖЕТ
+            <div className="font-bold text-xs uppercase tracking-wider text-amber-300">
+              ГРАФИЧЕСКО-ПИСЬМЕННЫЕ ДАННЫЕ И ИИ-АНАЛИТИК САЙТОВ
             </div>
           </div>
-          <p className="text-xs opacity-85 leading-relaxed">
-            Для работы без открытия браузера добавьте приложение на устройство:
+          <p className="text-xs text-amber-100/90 leading-relaxed">
+            Вкладка <strong>«МОНИТОРИНГ»</strong> оснащена глубокой телеметрией и нейросетевым консультантом:
           </p>
-          <ul className="text-xs opacity-80 list-disc list-inside space-y-1">
+          <ul className="text-xs text-amber-100/80 list-disc list-inside space-y-1">
             <li>
-              Во вкладке <strong>«УСТАНОВКА PWA»</strong> нажмите <strong>«Установить на устройство»</strong>.
+              <strong>Графическо-письменное отображение («ДАННЫЕ & ГРАФИКА»):</strong> интерактивный SVG-график задержки отклика (мс), круговая и столбчатая диаграмма распределения веса (HTML, JS-скрипты, медиа, текст), шкалы аптайма, полные HTTP-заголовки и структура разделов страницы.
             </li>
             <li>
-              Разрешите отправку Push-уведомлений, чтобы получать предупреждения в фоновом режиме.
+              <strong>Режим «ГРАФИКА»:</strong> переключатель в панели позволяет просматривать сводную инфографику по всем ресурсам одновременно.
             </li>
             <li>
-              Во вкладке <strong>«ВИДЖЕТ»</strong> доступен <strong>«Режим плавающего HUD»</strong> — компактное окно, которое удобно закрепить поверх конспектов или кода.
+              <strong>ИИ-Аналитик («СПРОСИТЬ ИИ»):</strong> возможность задать нейросети любой вопрос по конкретному сайту или выбрать сразу несколько прикреплённых ресурсов для сравнительного анализа (подбор литературы, навигация, дедлайны).
+            </li>
+          </ul>
+        </div>
+
+        {/* Step 5 */}
+        <div className="border border-[var(--crt-phosphor-dim)] bg-[#071309] p-4 rounded-xl space-y-2.5">
+          <div className="flex items-center gap-2">
+            <span className="w-6 h-6 rounded-full bg-[var(--crt-phosphor)] text-black font-extrabold text-xs flex items-center justify-center">
+              5
+            </span>
+            <div className="font-bold text-xs uppercase tracking-wider text-[var(--crt-phosphor-bright)]">
+              ГУМАНИТАРНАЯ НАУКА, ПЕРЕВОДЧИК И ИИ-ПОИСК
+            </div>
+          </div>
+          <p className="text-xs text-[var(--crt-phosphor)]/85 leading-relaxed">
+            Вкладка <strong>«НАУЧНЫЕ БАЗЫ»</strong> содержит все необходимые инструменты исследователя:
+          </p>
+          <ul className="text-xs text-[var(--crt-phosphor)]/80 list-disc list-inside space-y-1">
+            <li>
+              <strong>Каталог баз:</strong> проверенные открытые репозитории КиберЛенинка, eLIBRARY, ФЭБ, НЭБ и др.
+            </li>
+            <li>
+              <strong>Переводчик статей:</strong> перевод научных аннотаций с сохранением строгой академической терминологии.
+            </li>
+            <li>
+              <strong>ИИ-поиск:</strong> возможность спросить нейросеть о профильных базах и архивах по вашей теме.
             </li>
           </ul>
         </div>
       </div>
 
-      {/* Science & GitHub Highlights */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Science Module Highlight */}
-        <div className="border border-[var(--crt-phosphor)] bg-black/50 p-4 rounded-lg space-y-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 font-bold text-xs text-[var(--crt-phosphor-bright)] uppercase tracking-wider">
-              <FlaskConical size={16} /> НАУКА (PUBMED & ALPHAFOLD)
-            </div>
-            <button
-              onClick={onGoToScience}
-              className="text-xs underline text-[var(--crt-phosphor-bright)] cursor-pointer"
-            >
-              Перейти →
-            </button>
+      {/* Science Quick Link */}
+      <div className="border-2 border-[var(--crt-phosphor)] bg-[#08140a] p-4 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-[0_0_20px_var(--crt-glow)]">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 bg-[var(--crt-phosphor)]/15 border border-[var(--crt-phosphor)] rounded-lg text-[var(--crt-phosphor-bright)]">
+            <FlaskConical size={20} />
           </div>
-          <p className="text-xs opacity-85 leading-relaxed">
-            Поиск биомедицинских статей в NCBI PubMed, препринтов в Europe PMC и 3D-структур в AlphaFold DB с добавлением в авто-мониторинг.
-          </p>
+          <div>
+            <div className="font-bold text-xs sm:text-sm text-[var(--crt-phosphor-bright)] uppercase tracking-wider">
+              ГОТОВЫ ПЕРЕЙТИ К НАУЧНЫМ БАЗАМ ДАННЫХ?
+            </div>
+            <div className="text-xs text-[var(--crt-phosphor)]/80">
+              Каталог открытых библиотек, академический переводчик и встроенный гайд.
+            </div>
+          </div>
         </div>
 
-        {/* GitHub Highlight */}
-        <div className="border border-[var(--crt-phosphor)] bg-black/50 p-4 rounded-lg space-y-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 font-bold text-xs text-[var(--crt-phosphor-bright)] uppercase tracking-wider">
-              <FolderPlus size={16} /> СОВМЕСТИМОСТЬ С GITHUB
-            </div>
-            {onGoToGitHub && (
-              <button
-                onClick={onGoToGitHub}
-                className="text-xs underline text-[var(--crt-phosphor-bright)] cursor-pointer"
-              >
-                В GitHub →
-              </button>
-            )}
-          </div>
-          <p className="text-xs opacity-85 leading-relaxed">
-            Отслеживание коммитов и новых релизов учебных репозиториев через GitHub API, просмотр профиля и экспорт бэкапа настроек в GitHub Gist.
-          </p>
-        </div>
+        <button
+          onClick={onGoToScience}
+          className="px-4 py-2 bg-[var(--crt-phosphor)] text-black font-bold text-xs rounded-lg hover:bg-[var(--crt-phosphor-bright)] transition-colors uppercase tracking-wider cursor-pointer shrink-0"
+        >
+          В РАЗДЕЛ НАУКИ →
+        </button>
       </div>
 
-      {/* FAQ / Troubleshooting */}
-      <div className="border border-[var(--crt-phosphor-dim)] bg-black/40 p-4 rounded-lg space-y-3">
+      {/* FAQ & Themes */}
+      <div className="border border-[var(--crt-phosphor-dim)] bg-[#071309] p-4 sm:p-5 rounded-xl space-y-3">
         <div className="font-bold text-xs uppercase tracking-wider text-[var(--crt-phosphor-bright)] flex items-center gap-2">
           <HelpCircle size={15} /> ЧАСТО ЗАДАВАЕМЫЕ ВОПРОСЫ
         </div>
 
-        <div className="space-y-2 text-xs opacity-85">
+        <div className="space-y-3 text-xs text-[var(--crt-phosphor)]/85">
           <div>
             <strong className="text-[var(--crt-phosphor-bright)] block">
-              — Сохраняются ли добавленные ссылки при перезагрузке страницы?
+              — Сохраняются ли добавленные ссылки при закрытии браузера?
             </strong>
             <span>
-              Да, все ссылки, теги, категории и настройки автоматически сохраняются в локальном хранилище вашего браузера (LocalStorage).
+              Да, вся база ссылок, тегов, категорий и профиля хранится локально в вашем браузере (LocalStorage). Никакие личные данные не стираются при перезагрузке.
             </span>
           </div>
 
           <div>
             <strong className="text-[var(--crt-phosphor-bright)] block">
-              — Как отключить звук кликов или изменить цвет экрана?
+              — Как включить сиреневый цвет оформления?
             </strong>
             <span>
-              В правом верхнем углу панели управления нажмите на значок звука для отключения аудио или кнопку цвета для переключения между зеленым (Green), янтарным (Amber) и голубым (Cyan).
+              В правом верхнем углу панели управления нажмите кнопку переключения цвета люминофора. Доступны: <strong>СИРЕНЕВЫЙ</strong>, <strong>ЗЕЛЕНЫЙ</strong>, <strong>ЯНТАРНЫЙ</strong> и <strong>ГОЛУБОЙ</strong>.
+            </span>
+          </div>
+
+          <div>
+            <strong className="text-[var(--crt-phosphor-bright)] block">
+              — Как работает отображение времени и верхних/нижних недель?
+            </strong>
+            <span>
+              На верхней панели Pip-Boy в реальном времени тикают часы, синхронизированные с вашим устройством и пересчитанные по московскому времени (МСК), с указанием года, числа, месяца и дня недели. Система автоматически определяет текущую неделю по утвержденному графику из 18 недель (нечетные/верхние и четные/нижние). Нажав на кнопку недели, можно вызвать полную таблицу семестра.
             </span>
           </div>
         </div>

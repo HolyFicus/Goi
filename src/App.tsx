@@ -16,33 +16,31 @@ import { sendNativeNotification } from './utils/notifications';
 import { PipBoyShell, ActiveTab } from './components/PipBoyShell';
 import { TabMonitor } from './components/TabMonitor';
 import { TabScience } from './components/TabScience';
-import { TabWidget } from './components/TabWidget';
-import { TabInstallPWA } from './components/TabInstallPWA';
 import { TabProfile } from './components/TabProfile';
 import { TabGuide } from './components/TabGuide';
-import { TabGitHub } from './components/TabGitHub';
 
 const STORAGE_KEYS = {
-  LINKS: 'pipboy_clean_links_v3',
-  CATEGORIES: 'pipboy_clean_categories_v3',
-  PROFILE: 'pipboy_clean_profile_v3',
-  SETTINGS: 'pipboy_clean_settings_v3',
-  NOTIFS: 'pipboy_clean_notifs_v3'
+  LINKS: 'pipboy_clean_links_v4',
+  CATEGORIES: 'pipboy_clean_categories_v4',
+  PROFILE: 'pipboy_clean_profile_v4',
+  SETTINGS: 'pipboy_clean_settings_v4',
+  NOTIFS: 'pipboy_clean_notifs_v4'
 };
 
 const EMPTY_PROFILE: StudentProfile = {
   fullName: '',
   studentId: '',
   university: '',
-  faculty: '',
+  faculty: 'Гуманитарный факультет',
   group: '',
   course: 1,
   email: '',
   notes: ''
 };
 
+// Default theme is now lilac with full color switcher available
 const DEFAULT_SETTINGS: PipBoySettings = {
-  colorTheme: 'green',
+  colorTheme: 'lilac',
   audioEnabled: true,
   scanlines: true,
   crtFlicker: false,
@@ -52,24 +50,21 @@ const DEFAULT_SETTINGS: PipBoySettings = {
 };
 
 export default function App() {
-  // Check URL params for widget or science direct link
   const initialTab: ActiveTab = (() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const view = params.get('view');
-      if (view === 'widget') return 'WIDGET';
       if (view === 'science') return 'SCIENCE';
-      if (view === 'github') return 'GITHUB';
+      if (view === 'profile') return 'PROFILE';
       if (view === 'guide') return 'GUIDE';
     }
     return 'MONITOR';
   })();
 
   const [activeTab, setActiveTab] = useState<ActiveTab>(initialTab);
-  const [compactHudMode, setCompactHudMode] = useState(false);
   const [isScanningAll, setIsScanningAll] = useState(false);
 
-  // Clean Initial States: empty lists so user inputs their own data!
+  // Clean initial states: empty links so user inputs their own data!
   const [links, setLinks] = useState<MonitoredLink[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.LINKS);
@@ -279,7 +274,14 @@ export default function App() {
   // Update Link Category
   const handleUpdateLinkCategory = (id: string, category: string) => {
     setLinks((prev) =>
-      prev.map((l) => (l.category === id ? { ...l, category } : l))
+      prev.map((l) => (l.id === id ? { ...l, category } : l))
+    );
+  };
+
+  // Update Link Polling Interval
+  const handleUpdateLinkInterval = (id: string, intervalSec: number) => {
+    setLinks((prev) =>
+      prev.map((l) => (l.id === id ? { ...l, checkIntervalSec: intervalSec } : l))
     );
   };
 
@@ -333,8 +335,6 @@ export default function App() {
       notifications={notifications}
       onClearNotifications={handleClearNotifications}
       onResetAllData={handleResetAllData}
-      compactHudMode={compactHudMode}
-      onToggleCompactHud={() => setCompactHudMode(!compactHudMode)}
     >
       {activeTab === 'MONITOR' && (
         <TabMonitor
@@ -349,6 +349,7 @@ export default function App() {
           onToggleNotification={handleToggleNotification}
           onUpdateLinkTags={handleUpdateLinkTags}
           onUpdateLinkCategory={handleUpdateLinkCategory}
+          onUpdateLinkInterval={handleUpdateLinkInterval}
           onAddCategory={handleAddCategory}
           onRenameCategory={handleRenameCategory}
           onDeleteCategory={handleDeleteCategory}
@@ -357,30 +358,10 @@ export default function App() {
 
       {activeTab === 'SCIENCE' && (
         <TabScience
+          categories={categories}
+          onAddCategory={handleAddCategory}
           onAddScientificLink={handleAddLink}
         />
-      )}
-
-      {activeTab === 'GITHUB' && (
-        <TabGitHub
-          onAddGitHubLink={handleAddLink}
-          allLinks={links}
-          categories={categories}
-          profile={profile}
-        />
-      )}
-
-      {activeTab === 'WIDGET' && (
-        <TabWidget
-          links={links}
-          onScanAll={handleScanAll}
-          isScanning={isScanningAll}
-          onEnterCompactHud={() => setCompactHudMode(true)}
-        />
-      )}
-
-      {activeTab === 'INSTALL' && (
-        <TabInstallPWA />
       )}
 
       {activeTab === 'PROFILE' && (
@@ -394,8 +375,6 @@ export default function App() {
         <TabGuide
           onGoToMonitor={() => setActiveTab('MONITOR')}
           onGoToScience={() => setActiveTab('SCIENCE')}
-          onGoToInstall={() => setActiveTab('INSTALL')}
-          onGoToGitHub={() => setActiveTab('GITHUB')}
         />
       )}
     </PipBoyShell>

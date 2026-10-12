@@ -22,6 +22,29 @@ export interface DiffEntry {
   isRead: boolean;
 }
 
+export interface SiteTelemetry {
+  latencyMs: number;
+  latencyHistory: { timestamp: number; ping: number }[];
+  uptimePercent: number;
+  httpStatus: number;
+  protocol: string;
+  sslValid: boolean;
+  sslIssuer: string;
+  serverType: string;
+  pageSizeKb: number;
+  contentBreakdown: {
+    html: number; // in KB or %
+    scripts: number;
+    media: number;
+    text: number;
+  };
+  metaTitle: string;
+  metaDescription: string;
+  detectedSections: string[];
+  wordCount: number;
+  lastDnsLookupMs: number;
+}
+
 export interface MonitoredLink {
   id: string;
   title: string;
@@ -37,27 +60,26 @@ export interface MonitoredLink {
   diffHistory: DiffEntry[];
   autoRefresh: boolean;
   notificationEnabled: boolean;
+  telemetry?: SiteTelemetry;
   isScientific?: boolean;
   scientificMeta?: {
     query?: string;
-    source?: 'pubmed' | 'europepmc' | 'alphafold' | 'uniprot';
+    source?: string;
     paperCount?: number;
     latestTitle?: string;
-    pmid?: string;
+    author?: string;
+    discipline?: string;
     journal?: string;
   };
-  isGitHub?: boolean;
-  githubMeta?: {
-    owner: string;
-    repo: string;
-    lastCommitSha?: string;
-    lastCommitMessage?: string;
-    lastCommitDate?: string;
-    latestReleaseTag?: string;
-    stars?: number;
-    openIssues?: number;
-    defaultBranch?: string;
-  };
+}
+
+export interface SiteQAMessage {
+  id: string;
+  sender: 'user' | 'assistant';
+  text: string;
+  timestamp: number;
+  siteIds?: string[];
+  siteTitles?: string[];
 }
 
 export interface StudentProfile {
@@ -82,7 +104,7 @@ export interface PipBoyNotification {
   sourceUrl?: string;
 }
 
-export type ThemeColor = 'green' | 'amber' | 'cyan';
+export type ThemeColor = 'green' | 'amber' | 'cyan' | 'lilac';
 
 export interface PipBoySettings {
   colorTheme: ThemeColor;

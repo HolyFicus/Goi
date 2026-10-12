@@ -2,6 +2,24 @@
 
 @layer base {
   :root {
+    --crt-phosphor: #c084fc;
+    --crt-phosphor-dim: #7e22ce;
+    --crt-phosphor-bright: #e9d5ff;
+    --crt-bg: #11051d;
+    --crt-glow: rgba(192, 132, 252, 0.45);
+    --crt-glow-strong: rgba(216, 180, 254, 0.65);
+  }
+
+  [data-theme="lilac"] {
+    --crt-phosphor: #c084fc;
+    --crt-phosphor-dim: #7e22ce;
+    --crt-phosphor-bright: #e9d5ff;
+    --crt-bg: #11051d;
+    --crt-glow: rgba(192, 132, 252, 0.45);
+    --crt-glow-strong: rgba(216, 180, 254, 0.65);
+  }
+
+  [data-theme="green"] {
     --crt-phosphor: #22c55e;
     --crt-phosphor-dim: #15803d;
     --crt-phosphor-bright: #86efac;

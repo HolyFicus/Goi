@@ -104,7 +104,7 @@ export const TabProfile: React.FC<TabProfileProps> = ({
             </label>
             <input
               type="text"
-              placeholder="Например: Биологический факультет / Кафедра биоинформатики"
+              placeholder="Например: Исторический / Филологический факультет (Кафедра историографии)"
               value={formData.faculty}
               onChange={(e) => setFormData({ ...formData, faculty: e.target.value })}
               className="w-full bg-black border border-[var(--crt-phosphor)] px-3 py-2 text-[var(--crt-phosphor)] outline-none rounded"
