@@ -1,0 +1,6 @@
+{
+  "name": "Pip-Boy 3000: Student OS",
+  "description": "Тактический наручный терминал студента Pip-Boy 3000 (Student Edition) для мониторинга учебных порталов, научных баз PubMed и AlphaFold, трекинга репозиториев GitHub, мгновенных PWA-уведомлений и виджета на главном экране.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

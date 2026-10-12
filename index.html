@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pip-Boy 3000: Student OS</title>
+    <meta name="description" content="Тактический наручный терминал студента Pip-Boy 3000 (Student Edition) для мониторинга учебных порталов, научных баз PubMed и AlphaFold, трекинга репозиториев GitHub, мгновенных PWA-уведомлений и виджета на главном экране." />
+    <meta property="og:title" content="Pip-Boy 3000: Student OS" />
+    <meta property="og:description" content="Тактический наручный терминал студента Pip-Boy 3000 (Student Edition) для мониторинга учебных порталов, научных баз PubMed и AlphaFold, трекинга репозиториев GitHub, мгновенных PWA-уведомлений и виджета на главном экране." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- PWA Settings -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#0a1f0d" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Pip-Boy OS" />
+    <link rel="apple-touch-icon" href="/icon-192.svg" />
+    <link rel="icon" type="image/svg+xml" href="/icon-192.svg" />
+
+    <!-- Google Fonts for Pip-Boy CRT terminal typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&family=Fira+Code:wght@400;600;700&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-[#050c06] text-[#22c55e] select-none">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // Service worker registration
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW reg fail:', err));
+        });
+      }
+    </script>
+  </body>
+</html>
+
